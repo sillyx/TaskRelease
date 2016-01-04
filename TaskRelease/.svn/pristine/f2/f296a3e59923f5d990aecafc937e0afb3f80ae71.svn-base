@@ -1,0 +1,49 @@
+﻿using System;
+using TaskRelease.Model;
+using TaskRelease.Utility;
+using SingleTableCRUD;
+using System.Data.SqlClient;
+
+
+
+namespace TaskRelease.DAL
+{
+    public class MemberService
+    {
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <param name="loginId">登录名(邮箱，手机号,用户名)</param>
+        /// <returns></returns>
+        public Member UserLogin(string loginId)
+        {
+            string sql = string.Format(@"SELECT [Id]
+                                      ,[RealName]
+                                      ,[PhoneNo]
+                                      ,[Category]
+                                      ,[HeadImageUrl]
+                                      ,[Completed]
+                                      ,[SertId]
+                                      ,[UserName]
+                                      ,[QQNo]
+                                      ,[Email]
+                                      ,[Gender]
+                                  FROM [Member] where PhoneNo='{0}' or Email='{0}' or UserName='{0}'", loginId);
+
+            try
+            {
+                var ds = SqlDBHelper.Query(sql);
+                if (ds == null || ds.Tables[0].Rows.Count == 0)
+                {
+                    return null;
+                }
+                return DataTableHelper.ToEntity<Member>(ds.Tables[0]);
+            }
+            catch (Exception ex)
+            {
+                ex.WriterLog("TaskRelease.DAL.dll", "MemberService", "UserLogin");
+                return null;
+            }
+        }
+    }
+}

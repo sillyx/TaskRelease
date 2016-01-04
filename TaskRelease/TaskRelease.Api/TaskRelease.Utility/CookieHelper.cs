@@ -1,0 +1,318 @@
+﻿using System;
+using System.Web;
+
+namespace TaskRelease.Utility
+{
+    /// <summary>
+    /// 
+    /// Cookie操作帮助类
+    ///  
+    /// </summary>
+    public sealed class CookieHelper : IDisposable
+    {
+        private static CookieHelper _instance;
+        private static readonly object _lock = new object();
+
+        /// <summary>
+        /// 私有构造器
+        /// </summary>
+        private CookieHelper()
+        {
+        }
+
+        /// <summary>
+        /// 实例化入口
+        /// </summary>
+        /// <returns>实例对象</returns>
+        public static CookieHelper CreateInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new CookieHelper();
+                    }
+                }
+            }
+            return _instance;
+        }
+
+        /// <summary>
+        /// 销毁对象
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// 写Cookie
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void Write(string name, string value, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie.Value = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        /// <summary>
+        /// 写Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void WriteNoEncrypt(string name, string value, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie.Value = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        /// <summary>
+        /// 写Cookie
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="key">key</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void Write(string name, string key, string value, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie[key] = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        /// <summary>
+        /// 写Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="key">key</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void WriteNoEncrypt(string name, string key, string value, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie[key] = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        ///// <summary>
+        ///// 写Cookie
+        ///// </summary>
+        ///// <param name="name">Cookie名称</param>
+        ///// <param name="value">Cookie值</param>
+        ///// <param name="expires">过期时间</param>
+        ///// <param name="httpOnly">HttpOnly</param>
+        //public void Write(string name, string value, DateTime expires, bool httpOnly = false)
+        //{
+        //    HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+        //    if (cookie == null)
+        //    {
+        //        cookie = new HttpCookie(name);
+        //    }
+        //    cookie.Value = HttpUtility.UrlEncode(DESEncrypt.Encrypt(value));
+        //    cookie.HttpOnly = httpOnly;
+        //    cookie.Expires = expires;
+        //    HttpContext.Current.Response.AppendCookie(cookie);
+        //}
+
+        /// <summary>
+        /// 写Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="expires">过期时间</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void WriteNoEncrypt(string name, string value, DateTime expires, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie.Value = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            cookie.Expires = expires;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        ///// <summary>
+        ///// 写Cookie
+        ///// </summary>
+        ///// <param name="name">Cookie名称</param>
+        ///// <param name="value">Cookie值</param>
+        ///// <param name="path">路径</param>
+        ///// <param name="domain">域</param>
+        ///// <param name="expires">过期时间</param>
+        ///// <param name="ssl">SSL</param>
+        ///// <param name="httpOnly">HttpOnly</param>
+        //public void Write(string name, string value, string path, string domain, DateTime? expires, bool ssl = false, bool httpOnly = false)
+        //{
+        //    HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+        //    if (cookie == null)
+        //    {
+        //        cookie = new HttpCookie(name);
+        //    }
+        //    cookie.Value = HttpUtility.UrlEncode(DESEncrypt.Encrypt(value));
+        //    cookie.HttpOnly = httpOnly;
+        //    if (expires.HasValue)
+        //        cookie.Expires = (DateTime)expires;
+        //    if (!string.IsNullOrEmpty(path))
+        //        cookie.Path = path;
+        //    if (!string.IsNullOrEmpty(domain))
+        //        cookie.Domain = domain;
+        //    cookie.Secure = ssl;
+        //    cookie.HttpOnly = httpOnly;
+        //    HttpContext.Current.Response.AppendCookie(cookie);
+        //}
+
+        /// <summary>
+        /// 写Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="value">Cookie值</param>
+        /// <param name="path">路径</param>
+        /// <param name="domain">域</param>
+        /// <param name="expires">过期时间</param>
+        /// <param name="ssl">SSL</param>
+        /// <param name="httpOnly">HttpOnly</param>
+        public void WriteNoEncrypt(string name, string value, string path, string domain, DateTime? expires, bool ssl = false, bool httpOnly = false)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            cookie.Value = HttpUtility.UrlEncode(value);
+            cookie.HttpOnly = httpOnly;
+            if (expires.HasValue)
+                cookie.Expires = (DateTime)expires;
+            if (!string.IsNullOrEmpty(path))
+                cookie.Path = path;
+            if (!string.IsNullOrEmpty(domain))
+                cookie.Domain = domain;
+            cookie.Secure = ssl;
+            cookie.HttpOnly = httpOnly;
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        ///// <summary>
+        ///// 读Cookie
+        ///// </summary>
+        ///// <param name="name">Cookie名称</param>
+        ///// <returns></returns>
+        //public string Read(string name)
+        //{
+        //    if (HttpContext.Current.Request.Cookies != null && HttpContext.Current.Request.Cookies[name] != null)
+        //        return DESEncrypt.Decrypt(HttpUtility.UrlDecode(HttpContext.Current.Request.Cookies[name].Value));
+
+        //    return string.Empty;
+        //}
+
+        /// <summary>
+        /// 读Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <returns></returns>
+        public string ReadNoEncrypt(string name)
+        {
+            if (HttpContext.Current.Request.Cookies != null && HttpContext.Current.Request.Cookies[name] != null)
+                return HttpUtility.UrlDecode(HttpContext.Current.Request.Cookies[name].Value);
+
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// 读Cookie(不加密)
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="key">key</param>
+        /// <returns></returns>
+        public string ReadNoEncrypt(string name, string key)
+        {
+            if (HttpContext.Current.Request.Cookies != null && HttpContext.Current.Request.Cookies[name] != null && HttpContext.Current.Request.Cookies[name][key] != null)
+                return HttpUtility.UrlDecode(HttpContext.Current.Request.Cookies[name][key]);
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// 删除Cookie
+        /// </summary>
+        /// <param name="name">Cookie名称</param>
+        /// <param name="path">路径</param>
+        /// <param name="domain">域</param>
+        public void Remove(string name, string path, string domain)
+        {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(name);
+            }
+            if (!string.IsNullOrEmpty(path))
+                cookie.Path = path;
+            if (!string.IsNullOrEmpty(domain))
+                cookie.Domain = domain;
+            cookie.Expires = DateTime.Now.AddDays(-1);
+
+            HttpContext.Current.Response.AppendCookie(cookie);
+        }
+
+        /// <summary>
+        /// 写登录凭证
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="expires"></param>
+        public void WriteSessionID(string sessionId, DateTime? expires)
+        {
+            var cookie = System.Web.Security.FormsAuthentication.GetAuthCookie(sessionId, false);
+            if (expires.HasValue)
+                cookie.Expires = (DateTime)expires;
+            HttpContext.Current.Response.Cookies.Add(cookie);
+        }
+
+        /// <summary>
+        /// 读登录凭证
+        /// </summary>
+        /// <returns></returns>
+        public string ReadSessionID()
+        {
+            return HttpContext.Current.User.Identity.Name ?? string.Empty;
+        }
+
+        /// <summary>
+        /// 删除登录凭证
+        /// </summary>
+        /// <returns></returns>
+        public void RemoveSessionID()
+        {
+            System.Web.Security.FormsAuthentication.SignOut();
+        }
+    }
+}

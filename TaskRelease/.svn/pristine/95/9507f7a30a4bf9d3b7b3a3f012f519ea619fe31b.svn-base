@@ -1,0 +1,270 @@
+﻿//----------------------------------------------
+// Copyright © 2014 23soft. All Rights Reserved.
+//----------------------------------------------
+
+using System;
+using System.Text.RegularExpressions;
+using System.Collections;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Caching;
+
+namespace Delivery_Ninjas.Utility
+{
+    /// <summary>
+    /// 
+    /// HttpRunTime.Cache再次封装
+    /// 
+    /// </summary>
+    public sealed class CacheHelper
+    {
+        private static CacheHelper _instance;
+        private static readonly object _lock = new object();
+        private static Cache _cache;
+
+        /// <summary>
+        /// 私有构造器
+        /// </summary>
+        private CacheHelper()
+        {
+            _cache = HttpRuntime.Cache;
+        }
+
+        /// <summary>
+        /// 实例化入口
+        /// </summary>
+        /// <returns>实例对象</returns>
+        public static CacheHelper CreateInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new CacheHelper();
+                    }
+                }
+            }
+            return _instance;
+        }
+
+        /// <summary>
+        /// 缓存数量
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return _cache.Count;
+            }
+        }
+
+        /// <summary>
+        /// 缓存key集合
+        /// </summary>
+        public IList<string> Keys
+        {
+            get
+            {
+                List<string> keys = new List<string>();
+                IDictionaryEnumerator enumerator = _cache.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    keys.Add(enumerator.Key.ToString());
+                }
+                return keys.AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// 缓存是否存在
+        /// </summary>
+        /// <param name="key">缓存名称</param>
+        /// <returns>是否存在</returns>
+        public bool Exists(string key)
+        {
+            return _cache[key] != null;
+        }
+
+        /// <summary>
+        /// 查询缓存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public T Read<T>(string key)
+        {
+            object obj = Read(key);
+            return obj == null ? default(T) : (T)obj;
+        }
+
+        /// <summary>
+        /// 查询缓存
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object Read(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return null;
+            return _cache[key] == null ? null : _cache.Get(key);
+        }
+
+        /// <summary>
+        /// 永不过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        public void Write<T>(string key, T t)
+        {
+            _cache.Insert(key, t);
+        }
+
+        /// <summary>
+        /// 永不过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="onRemoveCallback"></param>
+        public void Write<T>(string key, T t, CacheItemRemovedCallback onRemoveCallback)
+        {
+            _cache.Insert(key, t, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Default, onRemoveCallback);
+        }
+
+        /// <summary>
+        /// 定时过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="expries">过期时间</param>
+        public void Write<T>(string key, T t, DateTime expries)
+        {
+            _cache.Insert(key, t, null, expries, Cache.NoSlidingExpiration);
+        }
+
+        /// <summary>
+        /// 定时过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="expries">过期时间</param>
+        /// <param name="onRemoveCallback"></param>
+        public void Write<T>(string key, T t, DateTime expries, CacheItemRemovedCallback onRemoveCallback)
+        {
+            _cache.Insert(key, t, null, expries, Cache.NoSlidingExpiration, CacheItemPriority.Default, onRemoveCallback);
+        }
+
+
+        public void Insert<T>(string key, T t, int minutes)
+        {
+            _cache.Insert(key, t, null, DateTime.Now.AddMinutes(minutes), Cache.NoSlidingExpiration, CacheItemPriority.Default, TimeOutCallBack);
+        }
+
+        public void TimeOutCallBack(string key, object value, CacheItemRemovedReason reason)
+        {
+            _cache.Insert(key, value);
+        }
+
+        //强制更新缓存
+        public void RefreshCache(string key, string value, DateTime expries, CacheItemRemovedCallback onRemoveCallback)
+        {
+            Remove(key);
+            Write(key, value, expries, onRemoveCallback);
+        }
+
+        /// <summary>
+        /// 平滑过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="seconds">过期时间,秒钟数</param>
+        public void Write<T>(string key, T t, int seconds)
+        {
+            _cache.Insert(key, t, null, Cache.NoAbsoluteExpiration, TimeSpan.FromSeconds(seconds));
+        }
+
+        /// <summary>
+        /// 定时过期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="seconds">过期时间,秒钟数</param>
+        /// <param name="onRemoveCallback"></param>
+        public void Write<T>(string key, T t, int seconds, CacheItemRemovedCallback onRemoveCallback)
+        {
+            _cache.Insert(key, t, null, Cache.NoAbsoluteExpiration, TimeSpan.FromSeconds(seconds), CacheItemPriority.Default, onRemoveCallback);
+        }
+
+        /// <summary>
+        /// 缓存依赖
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="file"></param>
+        public void Write<T>(string key, T t, string file)
+        {
+            CacheDependency cd = new CacheDependency(file);
+            _cache.Insert(key, t, cd);
+        }
+
+        /// <summary>
+        /// 缓存依赖
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="t"></param>
+        /// <param name="file"></param>
+        /// <param name="onRemoveCallback"></param>
+        public void Write<T>(string key, T t, string file, CacheItemRemovedCallback onRemoveCallback)
+        {
+            CacheDependency cd = new CacheDependency(file);
+            _cache.Insert(key, t, cd, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Default, onRemoveCallback);
+        }
+
+        /// <summary>
+        /// 删除缓存
+        /// </summary>
+        /// <param name="key"></param>
+        public void Remove(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return;
+            _cache.Remove(key);
+        }
+
+        /// <summary>
+        /// 删除缓存
+        /// </summary>
+        /// <param name="pattern">正则</param>
+        public void RemoveByPattern(string pattern)
+        {
+            IDictionaryEnumerator enumerator = _cache.GetEnumerator();
+            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+            while (enumerator.MoveNext())
+            {
+                if (regex.IsMatch(enumerator.Key.ToString()))
+                    _cache.Remove(enumerator.Key.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 清空缓存
+        /// </summary>
+        public void Clear()
+        {
+            IDictionaryEnumerator enumerator = _cache.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                _cache.Remove(enumerator.Key.ToString());
+            }
+        }
+    }
+}

@@ -1,0 +1,4 @@
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Utility\bin\Debug\TaskRelease.Utility.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Utility\bin\Debug\TaskRelease.Utility.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Utility\obj\Debug\TaskRelease.Utility.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Utility\obj\Debug\TaskRelease.Utility.pdb

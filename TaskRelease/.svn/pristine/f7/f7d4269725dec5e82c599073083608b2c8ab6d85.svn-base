@@ -1,0 +1,53 @@
+use master
+go
+if exists(select * from sysdatabases  where name='TaskRelease')
+drop database TaskRelease
+go
+create database TaskRelease
+go
+use TaskRelease
+go
+if exists(select * from sysobjects where name='[User]')
+drop table  [User]
+go
+create table [User]
+(
+	Id char(32) primary key not null,
+	PhoneNo char(11) not null,
+	Category smallint not null,
+	RegisterDate datetime not null,
+	HeadImageUrl varchar(200),
+	Completed bit not null,
+	SertId char(18),
+	UserName nvarchar(20),
+	QQNo char(15),
+	Email varchar(30),
+	Gender bit
+)
+go
+if exists(select * from sysobjects where name='PersonCategory')
+drop table  PersonCategory
+go
+create table PersonCategory
+(
+	Id char(32) primary key,
+	Name nvarchar(10) not null
+)
+go
+if exists(select * from sysobjects where name='PersonalInfo')
+drop table  PersonalInfo
+go
+create table PersonalInfo
+(
+	Id char(32) primary key,
+	UserId char(32) foreign key references [User](Id) not null,
+	CategoryId char(32) foreign key references PersonCategory(Id) not null,
+	City nvarchar(50) not null,
+	Salary nvarchar(20) not null,
+	CurrentState smallint not null,
+	IsTop bit not null,
+	CreateDate datetime not null,
+	AuditState bit not null,
+	Sort smallint
+)
+go

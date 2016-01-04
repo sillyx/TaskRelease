@@ -1,0 +1,305 @@
+﻿using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
+using System.Web.Security;
+using System.Configuration;
+using System.IO; 
+
+namespace Delivery_Ninjas.Utility
+{
+    public static class Extensions
+    {
+        public static string NewId()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
+
+          
+
+        public static string GetAppsettingKey(string keyName)
+        {
+            return ConfigurationManager.AppSettings[keyName].ToSafeTrim();
+        }
+
+        public static string GetClientIp()
+        {
+            return System.Web.HttpContext.Current.Request.ServerVariables.Get("Remote_Addr");
+        }
+
+
+        //判断当前时间是否为营业时间
+        public static bool IsBuisessHour(this string businessHour)
+        {
+            foreach (var hour in businessHour.Split(','))
+            {
+                var h = hour.Split('-');
+                var currentHour = DateTime.Now.ToShortTimeString();
+                var maxDate = h[1] == "24:00" ? "00:00".ToDateTime().AddDays(1) : h[1].ToDateTime();
+                if (currentHour.ToDateTime() <= maxDate && currentHour.ToDateTime() >= h[0].ToDateTime())
+                    return true;
+            }
+            return false;
+        }
+
+        public static void WriterLog(this Exception ex)
+        {
+            string DirName = AppDomain.CurrentDomain.BaseDirectory + "Log";
+            if (!Directory.Exists(DirName)) Directory.CreateDirectory(DirName);
+            DirName = DirName + "\\Log-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+            var fs = new FileInfo(DirName);
+            using (FileStream fw = fs.OpenWrite())
+            {
+                using (var sw = new StreamWriter(fw, Encoding.GetEncoding("GB2312")))
+                {
+                    sw.BaseStream.Seek(0, SeekOrigin.Begin);
+                    sw.WriteLine("当前时间：" + DateTime.Now.ToString());
+                    sw.WriteLine("异常信息：" + ex.Message);
+                    sw.WriteLine("异常对象：" + ex.Source);
+                    sw.WriteLine("调用堆栈：\n" + ex.StackTrace.Trim());
+                    sw.WriteLine("触发方法：" + ex.TargetSite);
+                    sw.WriteLine("--------- n");
+                    sw.WriteLine();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 判断字一个字符串是否为Empty或者Null,是返回false
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool NotNullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str) ? false : true;
+        }
+        /// <summary>
+        /// 将object类型转换为安全的String类型
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ToSafeTrim(this object str)
+        {
+            if (str == null)
+                return string.Empty;
+            return str.ToString().Trim();
+        }
+        /// <summary>
+        /// 将object类型转换为安全的Int类型
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static int ToInt(this object param)
+        {
+            int r = default(int);
+            try
+            {
+                int.TryParse(param.ToSafeTrim(), out r);
+                return r;
+            }
+            catch
+            {
+                return r;
+            }
+
+        }
+
+        public static bool IsNullOrEmpty(this string target)
+        {
+            return string.IsNullOrEmpty(target);
+        }
+
+        /// <summary>
+        /// 将Decimal类型转换为￥100的格式
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public static string FormatMoney(this decimal price)
+        {
+            return String.Format("￥{0}", price);
+        }
+        /// <summary>
+        /// 将object类型转换为安全的Double类型
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static double ToDouble(this object param)
+        {
+            double r = default(double);
+            try
+            {
+                double.TryParse(param.ToSafeTrim(), out r);
+                return r;
+            }
+            catch { return r; }
+
+        }
+        /// <summary>
+        /// 将object类型转换为安全的Decimal类型
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static decimal ToDecimal(this object param)
+        {
+            decimal r = default(decimal);
+            try
+            {
+                decimal.TryParse(param.ToSafeTrim(), out r);
+                return r;
+            }
+            catch { return r; }
+        }
+        /// <summary>
+        /// 将object类型转换为安全的Float类型
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static float ToFloat(this object param)
+        {
+            float r = default(float);
+            try
+            {
+                float.TryParse(param.ToSafeTrim(), out r);
+                return r;
+            }
+            catch { return r; }
+        }
+        /// <summary>
+        /// 将Ojbect类型转换为安全的DateTime类型
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static DateTime ToDateTime(this object obj)
+        {
+            DateTime dateTime = default(DateTime);
+            DateTime.TryParse(obj.ToSafeTrim(), out dateTime);
+            return dateTime;
+        }
+        /// <summary>
+        /// 根据指定长度截取字符串
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="maxLength"></param>
+        /// <returns></returns>
+        public static string CutString(this string target, int maxLength)
+        {
+            if (null == target
+                || 0 == target.Length
+                || maxLength < 1)
+                return String.Empty;
+
+            if (target.Length > maxLength)
+                return System.Web.HttpUtility.HtmlEncode(target.Substring(0, maxLength)) + "...";
+
+            return System.Web.HttpUtility.HtmlEncode(target);
+        }
+        /// <summary>
+        /// 比较俩个字符串，不区分大小写
+        /// </summary>
+        /// <param name="strA"></param>
+        /// <param name="strB"></param>
+        /// <returns></returns>
+        public static bool CompareIgnoreCase(this string strA, string strB)
+        {
+            return string.Compare(strA, strB, true) == 0 ? true : false;
+        }
+        /// <summary>
+        /// 比较俩个字符串，区分大小写
+        /// </summary>
+        /// <param name="strA"></param>
+        /// <param name="strB"></param>
+        /// <returns></returns>
+        public static bool CompareNotIgnoreCase(this string strA, string strB)
+        {
+            return string.Compare(strA, strB, false) == 0 ? true : false;
+        }
+        /// <summary>
+        /// 将一个object类型的数据序列化为Json对象
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ToJson(this object obj)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Serialize(obj);
+        }
+        /// <summary>
+        /// 返回带长度的Json对象
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static string ToJson(this object obj, int count)
+        {
+            string template = "\"total\":{0},\"rows\":{1}";
+            if (count == 0)
+            {
+                return "{" + string.Format(template, 0, "[]") + "}";
+            }
+            else
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                return "{" + string.Format(template, count, serializer.Serialize(obj)) + "}";
+            }
+        }
+        /// <summary>
+        /// 转换成Char类型
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static char ToChar(this object obj)
+        {
+            char result = default(char);
+            Char.TryParse(obj.ToSafeTrim(), out result);
+            return result;
+        }
+        /// <summary>
+        /// Md5加密
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ToMD5(this object obj)
+        {
+            return FormsAuthentication.HashPasswordForStoringInConfigFile(obj.ToSafeTrim(), "MD5");
+        }
+        /// <summary>
+        /// base64加密
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string EncodeBase64(this string str)
+        {
+            return Convert.ToBase64String(Encoding.Default.GetBytes(str));
+        }
+        /// <summary>
+        /// base64解密
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string DecodeBase64(this string str)
+        {
+            return Encoding.Default.GetString(Convert.FromBase64String(str));
+        }
+        /// <summary>
+        /// 判断是否为Int类型
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool IsInt(this object obj)
+        {
+            int r = default(int);
+            return int.TryParse(obj.ToSafeTrim(), out r);
+        }
+        /// <summary>
+        /// 利用正则表达式验证格式
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public static bool IsAnyFormat(this object obj, string pattern)
+        {
+            return Regex.IsMatch(obj.ToSafeTrim(), pattern);
+        }
+    }
+}
+

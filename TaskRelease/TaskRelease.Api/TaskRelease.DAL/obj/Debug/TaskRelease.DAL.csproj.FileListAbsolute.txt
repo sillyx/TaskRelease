@@ -1,0 +1,11 @@
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.DAL.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.DAL.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\SingleTableCRUD.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.Model.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.Utility.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\SingleTableCRUD.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.Model.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\bin\Debug\TaskRelease.Utility.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\obj\Debug\TaskRelease.DAL.csprojResolveAssemblyReference.cache
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\obj\Debug\TaskRelease.DAL.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.DAL\obj\Debug\TaskRelease.DAL.pdb

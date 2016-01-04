@@ -1,0 +1,12 @@
+C:\Users\Administrator\Desktop\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.dll
+C:\Users\Administrator\Desktop\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.pdb
+C:\Users\Administrator\Desktop\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.dll
+C:\Users\Administrator\Desktop\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.pdb
+D:\signleTableCRUD\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.dll
+D:\signleTableCRUD\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.pdb
+D:\signleTableCRUD\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.dll
+D:\signleTableCRUD\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.pdb
+D:\TaskRelease\TaskRelease.Api\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.dll
+D:\TaskRelease\TaskRelease.Api\SingleTableCRUD\SingleTableCRUD\bin\Debug\SingleTableCRUD.pdb
+D:\TaskRelease\TaskRelease.Api\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.dll
+D:\TaskRelease\TaskRelease.Api\SingleTableCRUD\SingleTableCRUD\obj\Debug\SingleTableCRUD.pdb

@@ -1,0 +1,7 @@
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\bin\Debug\TaskRelease.Model.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\bin\Debug\TaskRelease.Model.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\obj\Debug\TaskRelease.Model.csprojResolveAssemblyReference.cache
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\obj\Debug\TaskRelease.Model.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\obj\Debug\TaskRelease.Model.pdb
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\bin\Debug\SingleTableCRUD.dll
+D:\TaskRelease\TaskRelease.Api\TaskRelease.Model\bin\Debug\SingleTableCRUD.pdb
